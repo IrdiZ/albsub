@@ -1,0 +1,89 @@
+1
+00:00:01,000 --> 00:00:03,500
+Mirëmëngjes të gjithëve!
+
+2
+00:00:04,000 --> 00:00:06,200
+Si jeni sot?
+Gjithçka në rregull?
+
+3
+00:00:07,000 --> 00:00:09,800
+<i>Nuk mund ta besoj
+që ndodhi kjo.</i>
+
+4
+00:00:10,500 --> 00:00:12,300
+[Marco] Ku ishe dje?
+
+5
+00:00:13,000 --> 00:00:15,500
+Shkova në treg
+me mamanë time.
+
+6
+00:00:16,000 --> 00:00:18,200
+<b>Kujdes!</b> Kjo është e rëndësishme.
+
+7
+00:00:19,000 --> 00:00:21,500
+[Julia] Nuk më pëlqen
+ky vend.
+
+8
+00:00:22,000 --> 00:00:24,300
+Duhet të ikim menjëherë.
+
+9
+00:00:25,000 --> 00:00:27,800
+<i>Jeta është e bukur,</i>
+por edhe e vështirë.
+
+10
+00:00:28,500 --> 00:00:30,200
+[Marco] Ke të drejtë.
+
+11
+00:00:31,000 --> 00:00:33,500
+Më kujtohet kur ishim
+të rinj dhe të lumtur.
+
+12
+00:00:34,000 --> 00:00:36,200
+Ato kohëra nuk do të kthehen kurrë.
+
+13
+00:00:37,000 --> 00:00:39,500
+<i>Ndoshta një ditë
+gjithçka do të ndryshojë.</i>
+
+14
+00:00:40,000 --> 00:00:42,300
+[Julia] Shpresoj shumë.
+Me gjithë zemër.
+
+15
+00:00:43,000 --> 00:00:45,800
+Le të shkojmë në shtëpi, është vonë.
+
+16
+00:00:46,500 --> 00:00:48,200
+<b>Mos harro</b> çelësat!
+
+17
+00:00:49,000 --> 00:00:51,500
+[Marco] I kam marrë tashmë.
+Mos u shqetëso.
+
+18
+00:00:52,000 --> 00:00:54,300
+Faleminderit për gjithçka, miku im.
+
+19
+00:00:55,000 --> 00:00:57,800
+<i>Dhe kështu përfundon
+një ditë tjetër.</i>
+
+20
+00:00:58,500 --> 00:01:00,200
+Natën e mirë të gjithëve.
