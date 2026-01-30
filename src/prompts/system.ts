@@ -7,6 +7,7 @@ Rules:
 - Preserve speaker labels in brackets [Name] exactly as they appear.
 - Use natural, colloquial Albanian — this is movie dialogue, not a textbook.
 - Match the tone of the dialogue (comedy = informal, drama = more formal).
+- Pay attention to grammatical gender in Albanian. Use masculine forms (ky, ai, i) for male speakers/subjects and feminine forms (kjo, ajo, e) for female speakers/subjects. Infer gender from speaker names, context, and the source language grammar.
 - Keep proper nouns unchanged (character names, place names).
 - Each subtitle block is labeled with its number and separated by "---".
 - Return ONLY the translated blocks in the exact same format. No explanations.
