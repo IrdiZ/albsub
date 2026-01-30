@@ -1,0 +1,89 @@
+1
+00:00:01,000 --> 00:00:03,500
+Good morning everyone!
+
+2
+00:00:04,000 --> 00:00:06,200
+How are you today?
+Everything okay?
+
+3
+00:00:07,000 --> 00:00:09,800
+<i>I can't believe
+this happened.</i>
+
+4
+00:00:10,500 --> 00:00:12,300
+[Marco] Where did you go yesterday?
+
+5
+00:00:13,000 --> 00:00:15,500
+I went to the market
+with my mother.
+
+6
+00:00:16,000 --> 00:00:18,200
+<b>Attention!</b> This is important.
+
+7
+00:00:19,000 --> 00:00:21,500
+[Julia] I don't like
+this place.
+
+8
+00:00:22,000 --> 00:00:24,300
+We need to leave right away.
+
+9
+00:00:25,000 --> 00:00:27,800
+<i>Life is beautiful,</i>
+but also difficult.
+
+10
+00:00:28,500 --> 00:00:30,200
+[Marco] You're right.
+
+11
+00:00:31,000 --> 00:00:33,500
+I remember when we were
+young and happy.
+
+12
+00:00:34,000 --> 00:00:36,200
+Those times will never return.
+
+13
+00:00:37,000 --> 00:00:39,500
+<i>Maybe one day
+everything will change.</i>
+
+14
+00:00:40,000 --> 00:00:42,300
+[Julia] I really hope so.
+With all my heart.
+
+15
+00:00:43,000 --> 00:00:45,800
+Let's go home, it's late.
+
+16
+00:00:46,500 --> 00:00:48,200
+<b>Don't forget</b> the keys!
+
+17
+00:00:49,000 --> 00:00:51,500
+[Marco] I already took them.
+Don't worry.
+
+18
+00:00:52,000 --> 00:00:54,300
+Thank you for everything, my friend.
+
+19
+00:00:55,000 --> 00:00:57,800
+<i>And so ends
+another day.</i>
+
+20
+00:00:58,500 --> 00:01:00,200
+Good night everyone.
