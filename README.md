@@ -72,25 +72,25 @@ AlbSub is a CLI pipeline that takes subtitle files (.srt) in **any source langua
 
 ```bash
 # Basic usage — Italian to Albanian using Claude
-albsub translate movie.ita.srt -o movie.alb.srt --from it --model claude-sonnet-4-20250514
+albsub translate movie.ita.srt -o movie.alb.srt --language it --provider anthropic
 
 # Using OpenAI
-albsub translate movie.srt -o movie.alb.srt --from en --provider openai --model gpt-4o
+albsub translate movie.srt -o movie.alb.srt --language en --provider openai --model gpt-4o
 
 # Using local Ollama model
-albsub translate movie.srt -o movie.alb.srt --from tr --provider ollama --model llama3
+albsub translate movie.srt -o movie.alb.srt --language tr --provider ollama --model llama3
 
-# With custom API endpoint (any OpenAI-compatible)
-albsub translate movie.srt -o movie.alb.srt --from el --base-url http://localhost:8080/v1
+# With config file
+albsub translate movie.srt -o movie.alb.srt --language el --config albsub.config.yml
 
 # Parallel workers for speed
-albsub translate movie.srt -o movie.alb.srt --from it --workers 4
+albsub translate movie.srt -o movie.alb.srt --language it --workers 4
 
 # Validate an existing translation
 albsub validate original.srt translated.srt
 
 # Dry run — show what would be translated without calling the API
-albsub translate movie.srt -o movie.alb.srt --from it --dry-run
+albsub translate movie.srt -o movie.alb.srt --language it --dry-run
 ```
 
 ### Configuration
