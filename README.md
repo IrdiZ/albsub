@@ -1,6 +1,6 @@
 # 🇦🇱 AlbSub — Subtitle Translation Pipeline for Albanian
 
-**Translate movie subtitles into Albanian using any LLM. Built because we couldn't find English subs for a 2004 Italian comedy at 1 AM.**
+**Translate movie subtitles into Albanian using any LLM. Built because we couldn't find English subs for a 2004 Italian comedy at 3 AM in January.**
 
 ---
 
@@ -168,7 +168,7 @@ LLMs give you:
 
 ## The Origin Story
 
-January 30, 2026, 1 AM. I wanted to watch *Christmas in Love* (2004) — a Boldi & De Sica Italian Christmas comedy. The movie exists in Italian. English subtitles? Scraped the entire internet — OpenSubtitles, Subscene, Podnapisi, SubDL, obscure forums — nothing. Found Italian .srt files, ran them through a translation pipeline I built on the spot, and had English subs in 15 minutes.
+January, 3 AM. I wanted to watch *Christmas in Love* (2004) — a Boldi & De Sica Italian Christmas comedy. The movie exists in Italian. English subtitles? Scraped the entire internet — OpenSubtitles, Subscene, Podnapisi, SubDL, obscure forums — nothing. Found Italian .srt files, ran them through a translation pipeline I built on the spot, and had English subs in 15 minutes.
 
 Then I thought: if English subs don't exist for a popular Italian comedy, what about Albanian? Albanian subtitles are virtually nonexistent for foreign films. Millions of Albanian speakers worldwide consuming Turkish dramas, Italian comedies, Greek films — all without subtitle support.
 
