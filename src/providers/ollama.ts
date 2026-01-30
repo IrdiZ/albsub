@@ -19,7 +19,7 @@ export class OllamaProvider implements LLMProvider {
         ],
         options: {
           temperature: options.temperature ?? 0.3,
-          num_predict: options.maxTokens || 4096,
+          num_predict: options.maxTokens || 8192,
         },
       }),
     });

@@ -10,7 +10,7 @@ export class AnthropicProvider implements LLMProvider {
 
     const response = await client.messages.create({
       model: options.model || 'claude-sonnet-4-20250514',
-      max_tokens: options.maxTokens || 4096,
+      max_tokens: options.maxTokens || 8192,
       temperature: options.temperature ?? 0.3,
       system: systemPrompt,
       messages: [{ role: 'user', content: userPrompt }],

@@ -14,7 +14,7 @@ export class OpenAIProvider implements LLMProvider {
     const response = await client.chat.completions.create({
       model: options.model || 'gpt-4o',
       temperature: options.temperature ?? 0.3,
-      max_tokens: options.maxTokens || 4096,
+      max_tokens: options.maxTokens || 8192,
       messages: [
         { role: 'system', content: systemPrompt },
         { role: 'user', content: userPrompt },

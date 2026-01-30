@@ -1,5 +1,8 @@
 #!/usr/bin/env node
 
+import { readFileSync } from 'node:fs';
+import { fileURLToPath } from 'node:url';
+import { dirname, join } from 'node:path';
 import { Command } from 'commander';
 import chalk from 'chalk';
 import { parseSRTFile, writeSRTFile } from './parser.js';
@@ -10,12 +13,15 @@ import { detectFromBlocks } from './detect.js';
 import { loadConfig } from './config.js';
 import { ProgressBar } from './progress.js';
 
+const __dirname = dirname(fileURLToPath(import.meta.url));
+const pkg = JSON.parse(readFileSync(join(__dirname, '..', 'package.json'), 'utf-8'));
+
 const program = new Command();
 
 program
   .name('albsub')
   .description('Translate subtitle files (.srt) into Albanian using LLMs')
-  .version('1.0.0');
+  .version(pkg.version);
 
 program
   .command('translate')
@@ -68,7 +74,7 @@ program
       const progress = new ProgressBar(parsed.blocks.length);
       const results = await translate(parsed.blocks, {
         provider,
-        providerOptions: { model, temperature, maxTokens: 4096, apiKey },
+        providerOptions: { model, temperature, maxTokens: 8192, apiKey },
         sourceLanguage,
         batchSize,
         contextWindow,
@@ -91,6 +97,7 @@ program
       const translatedBlocks = results.map(r => r.translated);
       writeSRTFile(translatedBlocks, outputPath, {
         lineEnding: parsed.lineEnding,
+        bom: parsed.encoding === 'UTF-8 BOM',
       });
       console.log(chalk.bold.green(`\n✓ Written: ${outputPath}\n`));
     } catch (err) {
