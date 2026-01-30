@@ -23,7 +23,8 @@ function parseTranslationResponse(response: string, originalBlocks: SubtitleBloc
   for (let i = 0; i < originalBlocks.length; i++) {
     const section = sections[i];
     if (!section) {
-      // Fallback: keep original
+      // Fallback: keep original — LLM returned fewer blocks than expected
+      console.warn(`⚠ Block ${originalBlocks[i].number}: LLM returned no translation, keeping original`);
       results.push({ ...originalBlocks[i] });
       continue;
     }
