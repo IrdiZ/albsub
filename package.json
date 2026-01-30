@@ -1,0 +1,35 @@
+{
+  "name": "albsub",
+  "version": "1.0.0",
+  "description": "CLI tool to translate subtitle files (.srt) into Albanian using LLMs",
+  "type": "module",
+  "main": "dist/index.js",
+  "bin": {
+    "albsub": "./bin/albsub.js"
+  },
+  "scripts": {
+    "build": "tsc",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "start": "tsx src/index.ts"
+  },
+  "keywords": ["subtitles", "srt", "albanian", "translation", "llm", "cli"],
+  "author": "Irdi Zeneli <irdizeneli@titanrad.com>",
+  "license": "MIT",
+  "dependencies": {
+    "@anthropic-ai/sdk": "^0.39.0",
+    "chalk": "^5.3.0",
+    "cli-progress": "^3.12.0",
+    "commander": "^12.1.0",
+    "franc-min": "^6.2.0",
+    "openai": "^4.77.0",
+    "yaml": "^2.7.0"
+  },
+  "devDependencies": {
+    "@types/cli-progress": "^3.11.6",
+    "@types/node": "^22.10.0",
+    "tsx": "^4.19.0",
+    "typescript": "^5.7.0",
+    "vitest": "^2.1.0"
+  }
+}

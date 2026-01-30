@@ -1,0 +1,27 @@
+﻿1
+00:00:01,000 --> 00:00:03,500
+This has a BOM marker.
+
+2
+00:00:04,000 --> 00:00:06,200
+This has CRLF endings.
+Second line here.
+
+3
+
+4
+00:00:10,500 --> 00:00:12,300
+Block 3 was empty, this is block 4.
+
+Some random text without timestamp
+
+5
+00:00:16,000 --> 00:00:18,200
+Normal block after garbage.
+
+00:00:19,000 --> 00:00:21,500
+Missing sequence number.
+
+7
+00:00:22,000 --> 00:00:24,300
+Last valid block.
