@@ -20,9 +20,13 @@ export function loadConfig(filePath?: string): AlbsubConfig {
 
   for (const p of paths) {
     if (existsSync(p)) {
-      const raw = readFileSync(p, 'utf-8');
-      const parsed = parse(raw) as Partial<AlbsubConfig>;
-      return { ...DEFAULTS, ...parsed };
+      try {
+        const raw = readFileSync(p, 'utf-8');
+        const parsed = parse(raw) as Partial<AlbsubConfig>;
+        return { ...DEFAULTS, ...parsed };
+      } catch (error) {
+        throw new Error(`Failed to parse config file ${p}: ${(error as Error).message}`);
+      }
     }
   }
 
