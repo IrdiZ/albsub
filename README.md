@@ -112,11 +112,11 @@ The bad result has one line instead of two. The tool sends the block again with 
 
 ## Limitations
 
-- Translation quality is not measured. The tests use mocked providers. Only Italian and English input have been tried by hand.
+- Translation quality is not measured. The tests use mocked providers. Quality is not measured for any source language.
 - Run a native Albanian speaker over the result. LLMs can make mistakes in grammatical gender, word choice, and tone.
 - If a block still fails after all retries, it is kept in the output and counted as failed in the summary. Check the summary.
 - The validator checks structure only. It does not check that the meaning is right.
-- The tool does not wait or back off when an API rate limit is hit. A failed call for a retry is skipped.
+- The tool does not wait or back off when an API rate limit is hit. If the first call for a batch fails, the run stops with an error.
 - Only the `.srt` format is supported.
 - There is no dry-run mode, no cost estimate, and no custom provider yet.
 - The Ollama provider uses `http://localhost:11434`. Changing the URL is not possible from the CLI yet.
