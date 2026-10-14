@@ -28,22 +28,23 @@ program
   .description('Translate an SRT file to Albanian')
   .argument('<input>', 'Input .srt file path')
   .option('-o, --output <path>', 'Output file path (default: input.alb.srt)')
-  .option('-p, --provider <name>', 'LLM provider (anthropic, openai, ollama)', 'anthropic')
-  .option('-m, --model <name>', 'Model name')
+  .option('-p, --provider <name>', 'LLM provider: anthropic, openai, ollama (default: anthropic)')
+  .option('-m, --model <name>', 'Model name (default: claude-sonnet-4-20250514; set it for openai and ollama)')
   .option('-k, --api-key <key>', 'API key (or use env: ANTHROPIC_API_KEY, OPENAI_API_KEY)')
-  .option('-b, --batch-size <n>', 'Blocks per batch', '25')
-  .option('-c, --context <n>', 'Context window size', '3')
-  .option('-w, --workers <n>', 'Parallel workers', '2')
-  .option('-r, --retries <n>', 'Max retries per block', '2')
+  .option('-b, --batch-size <n>', 'Blocks per batch (default: 25)')
+  .option('-c, --context <n>', 'Context window size (default: 3)')
+  .option('-w, --workers <n>', 'Parallel workers (default: 2)')
+  .option('-r, --retries <n>', 'Max retries per block (default: 2)')
   .option('-l, --language <lang>', 'Source language (auto-detected if omitted)')
   .option('--config <path>', 'Config file path')
-  .option('-t, --temperature <n>', 'LLM temperature', '0.3')
+  .option('-t, --temperature <n>', 'LLM temperature (default: 0.3)')
   .action(async (input: string, opts: Record<string, string>) => {
     try {
       const config = loadConfig(opts.config);
       const providerName = opts.provider || config.provider;
       const model = opts.model || config.model;
-      const apiKey = opts.apiKey || config.apiKey || process.env.ANTHROPIC_API_KEY || process.env.OPENAI_API_KEY;
+      const envKey = providerName.toLowerCase() === 'openai' ? process.env.OPENAI_API_KEY : process.env.ANTHROPIC_API_KEY;
+      const apiKey = opts.apiKey || config.apiKey || envKey;
       const batchSize = parseInt(opts.batchSize) || config.batchSize;
       const contextWindow = parseInt(opts.context) || config.contextWindow;
       const workers = parseInt(opts.workers) || config.workers;
