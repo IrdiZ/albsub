@@ -1,248 +1,134 @@
-# 🇦🇱 AlbSub — Subtitle Translation Pipeline for Albanian
+# AlbSub
 
-**Translate movie subtitles into Albanian using any LLM. Built because we couldn't find English subs for a 2004 Italian comedy at 3 AM in January.**
+A command-line tool that translates `.srt` subtitle files into Albanian with an LLM.
 
----
+Status: early prototype. The unit tests pass, but they use mocked providers. Real translation quality is not measured yet.
 
-## The Problem
+## What it does
 
-I wanted to watch *Christmas in Love* (2004) — a classic Italian cinepanettone with Boldi & De Sica. The movie is in Italian. English subtitles? Don't exist. Albanian subtitles? Forget about it.
+- Reads an `.srt` file in any language that your LLM knows. It detects the source language, or you set it with `--language`.
+- Sends the subtitles to Anthropic, OpenAI, or a local Ollama model in batches.
+- Gives the model the previous blocks as context, so it can follow the scene.
+- Checks every translated block against the original. It checks the line count, empty text, HTML tags (`<i>`, `<b>`), and speaker labels (`[Name]`).
+- Asks the model again for blocks that fail the checks.
+- Writes a new `.srt` file. Timestamps stay the same.
 
-This isn't a one-off problem. **Thousands of movies** — Italian, Turkish, Greek, Indian — are loved by Albanian audiences but have zero Albanian subtitle coverage. The existing subtitle databases (OpenSubtitles, Subscene, Podnapisi) have virtually nothing in Albanian. What does exist is often machine-translated garbage that misses cultural context, humor, and natural speech.
+Why: Albanian subtitles are rare for many foreign films and series. This tool gives you a first draft quickly.
 
-**Albanian is one of the most underserved languages in the subtitle ecosystem.**
+<!-- demo gif: terminal run of `albsub translate tests/fixtures/sample.ita.srt --language it` showing the progress bar and the results summary, then the first lines of the output file -->
 
-The implications go beyond just watching movies:
-- **Albanian diaspora** (estimated 10M+ worldwide) consumes foreign media daily with no subtitle support
-- **Albanian film education** suffers — students can't study foreign cinema in their language
-- **Cultural accessibility** — older generations who don't speak English are locked out of global entertainment
-- **The Albanian art scene** — directors, screenwriters, and filmmakers lose exposure to international storytelling techniques when they can't access foreign films with quality translations
+## Quick start
 
-## The Solution
-
-AlbSub is a CLI pipeline that takes subtitle files (.srt) in **any source language** and produces high-quality Albanian translations using LLMs. Not Google Translate. Not a lookup table. Actual contextual, natural, colloquial Albanian — the kind that sounds like a human translator wrote it.
-
-### Key Features
-
-- 🌍 **Multi-language input** — Italian, English, Turkish, Greek, French, German, Spanish, and more → Albanian
-- 🤖 **Any LLM backend** — OpenAI, Anthropic, local Ollama models, or any OpenAI-compatible API
-- 📊 **Live progress tracking** — real-time progress bar with ETA, blocks translated, speed
-- ✅ **Line validation** — automatically checks that every block has the correct number of lines (no dropped second lines, no truncated dialogue)
-- 🔄 **Batch processing** — translates in configurable batches for speed and reliability
-- 🔁 **Auto-retry** — failed blocks are automatically retried with exponential backoff
-- 📝 **SRT-aware** — preserves timestamps, HTML tags (`<i>`, `<b>`), speaker labels (`[Name]`), and subtitle formatting
-- 🎭 **Context-aware** — sends surrounding blocks as context so the LLM understands the scene, not just isolated lines
-- 🔍 **Validation report** — post-translation report showing block count match, line count match, empty block detection
-- ⚡ **Parallel workers** — configurable concurrency for faster translation
-
-## Architecture
-
-```
-┌─────────────┐     ┌──────────────┐     ┌─────────────────┐     ┌──────────────┐
-│  Input .srt  │────▶│  SRT Parser   │────▶│  Batch Chunker   │────▶│  LLM Workers  │
-│  (any lang)  │     │  (validate)   │     │  (configurable)  │     │  (parallel)   │
-└─────────────┘     └──────────────┘     └─────────────────┘     └──────┬───────┘
-                                                                         │
-                    ┌──────────────┐     ┌─────────────────┐            │
-                    │  Output .srt  │◀────│  Validator       │◀───────────┘
-                    │  (Albanian)   │     │  (line matching) │
-                    └──────────────┘     └─────────────────┘
-```
-
-### Pipeline Steps
-
-1. **Parse** — Read .srt, extract blocks (number, timestamp, text lines)
-2. **Detect language** — Auto-detect source language or accept user override
-3. **Chunk** — Group blocks into batches (default: 50 blocks per batch)
-4. **Translate** — Send each batch to the configured LLM with:
-   - System prompt enforcing Albanian translation rules
-   - Context window (previous 3 blocks for continuity)
-   - Strict instruction to preserve line count per block
-5. **Validate** — For each translated block:
-   - Line count matches original ✓
-   - No empty lines where original had text ✓
-   - HTML tags preserved ✓
-   - Speaker labels preserved ✓
-   - Timestamps unchanged ✓
-6. **Retry** — Any failed validation → re-translate that block with explicit error feedback
-7. **Assemble** — Write validated blocks to output .srt
-8. **Report** — Print summary: total blocks, pass rate, any remaining issues
-
-## Usage
+You need Node.js 18 or newer and an API key for Anthropic or OpenAI. For Ollama you need a running Ollama server instead.
 
 ```bash
-# Basic usage — Italian to Albanian using Claude
-albsub translate movie.ita.srt -o movie.alb.srt --language it --provider anthropic
-
-# Using OpenAI
-albsub translate movie.srt -o movie.alb.srt --language en --provider openai --model gpt-4o
-
-# Using local Ollama model
-albsub translate movie.srt -o movie.alb.srt --language tr --provider ollama --model llama3
-
-# With config file
-albsub translate movie.srt -o movie.alb.srt --language el --config albsub.config.yml
-
-# Parallel workers for speed
-albsub translate movie.srt -o movie.alb.srt --language it --workers 4
-
-# Validate an existing translation
-albsub validate original.srt translated.srt
-
-# Dry run — show what would be translated without calling the API
-albsub translate movie.srt -o movie.alb.srt --language it --dry-run
+git clone https://github.com/IrdiZ/albsub.git
+cd albsub
+npm install
+npm run build
 ```
 
-### Configuration
+`bin/albsub.js` loads `dist/`, so run the build before the first use. To get the `albsub` command on your PATH, run `npm link`. Without it, use `node bin/albsub.js` in place of `albsub`.
+
+Translate a file with Claude:
+
+```bash
+export ANTHROPIC_API_KEY=your-key
+albsub translate movie.ita.srt -o movie.alb.srt --language it
+```
+
+Use OpenAI. Set the model, because the default model is a Claude model:
+
+```bash
+export OPENAI_API_KEY=your-key
+albsub translate movie.srt -o movie.alb.srt --provider openai --model gpt-4o
+```
+
+Use a local Ollama model (default server: `http://localhost:11434`):
+
+```bash
+albsub translate movie.srt -o movie.alb.srt --provider ollama --model llama3
+```
+
+Other commands:
+
+```bash
+albsub detect movie.srt                      # print the detected language
+albsub validate original.srt translated.srt  # check a translation, no API call
+```
+
+If you leave out `-o`, the output goes to the input name with `.srt` replaced by `.alb.srt`.
+
+### Options
+
+| Option | Default | Meaning |
+|---|---|---|
+| `-o, --output <path>` | `<input>.alb.srt` | Output file |
+| `-p, --provider <name>` | `anthropic` | `anthropic`, `openai`, or `ollama` |
+| `-m, --model <name>` | `claude-sonnet-4-20250514` | Model name |
+| `-k, --api-key <key>` | env variable | Otherwise `ANTHROPIC_API_KEY` or `OPENAI_API_KEY` |
+| `-b, --batch-size <n>` | 25 | Blocks per LLM call |
+| `-c, --context <n>` | 3 | Earlier blocks sent as context |
+| `-w, --workers <n>` | 2 | Batches translated at the same time |
+| `-r, --retries <n>` | 2 | Retries per failed block |
+| `-l, --language <lang>` | auto-detect | Source language, as a name or code |
+| `-t, --temperature <n>` | 0.3 | LLM temperature |
+| `--config <path>` | see below | Config file |
+
+### Config file
+
+The tool reads `albsub.yml`, `albsub.yaml`, `.albsub.yml`, or `.albsub.yaml` in the current folder. Command-line options override it. The keys are camelCase:
 
 ```yaml
-# albsub.config.yml
-provider: anthropic          # anthropic | openai | ollama | custom
-model: claude-sonnet-4-20250514       # any model the provider supports
-api_key: ${ANTHROPIC_API_KEY}  # env var reference
-base_url: null               # custom endpoint (for ollama, vllm, etc.)
-
-translation:
-  target: sq                 # Albanian (ISO 639-1)
-  batch_size: 50             # blocks per API call
-  context_window: 3          # surrounding blocks for context
-  workers: 2                 # parallel translation workers
-  max_retries: 3             # retry failed blocks
-
-validation:
-  strict_line_count: true    # enforce matching line counts
-  check_empty: true          # flag empty translations
-  check_tags: true           # verify HTML tag preservation
-  check_labels: true         # verify speaker label preservation
-
-style:
-  formality: colloquial      # colloquial | neutral | formal
-  dialect: standard          # standard | gheg | tosk
-  preserve_slang: true       # attempt to find Albanian equivalents for slang
+provider: openai
+model: gpt-4o
+batchSize: 25
+contextWindow: 3
+workers: 2
+temperature: 0.3
+maxRetries: 2
+# apiKey: ...   (better to use an environment variable)
 ```
 
-## Supported Source Languages
-
-| Language | Code | Quality |
-|----------|------|---------|
-| Italian | `it` | ⭐⭐⭐⭐⭐ (tested extensively) |
-| English | `en` | ⭐⭐⭐⭐⭐ |
-| Turkish | `tr` | ⭐⭐⭐⭐ |
-| Greek | `el` | ⭐⭐⭐⭐ |
-| French | `fr` | ⭐⭐⭐⭐ |
-| German | `de` | ⭐⭐⭐⭐ |
-| Spanish | `es` | ⭐⭐⭐⭐ |
-| Serbian | `sr` | ⭐⭐⭐⭐ |
-| Arabic | `ar` | ⭐⭐⭐ |
-| Hindi | `hi` | ⭐⭐⭐ |
-
-Quality depends on the LLM's training data for that language pair. Italian/English → Albanian works best since most LLMs have strong coverage of all three.
-
-## Validation System
-
-The #1 problem with LLM subtitle translation is **dropped lines**. A 2-line subtitle block comes back as 1 line, losing half the dialogue. AlbSub solves this:
+## How it works
 
 ```
-Original (Italian):                    Bad Translation:              AlbSub Output:
-─────────────────                      ───────────────               ──────────────
-[Guido] <i>Questo sono io,</i>        [Guido] <i>This is me,</i>   [Guido] <i>Ky jam unë,</i>
-<i>Guido Baldi. Ho 54 anni.</i>       (LINE MISSING!)               <i>Guido Baldi. Jam 54 vjeç.</i>
+input.srt -> parse -> detect language -> batches (+ context)
+          -> LLM workers -> validate each block -> retry failed blocks
+          -> output.srt + summary
 ```
 
-Every block is validated post-translation. If line counts don't match, the block is automatically re-sent to the LLM with an explicit correction prompt. This runs up to 3 times before flagging it for manual review.
+See [ARCHITECTURE.md](ARCHITECTURE.md) for the module layout.
 
-## Why LLMs Beat Traditional Machine Translation
+Example of the line-count problem that the validator catches. An LLM sometimes returns one line for a two-line block:
 
-Google Translate for subtitles gives you:
-- ❌ Literal word-for-word translation
-- ❌ No understanding of humor, sarcasm, or cultural context
-- ❌ Formal register when the character is being casual
-- ❌ No awareness that this is dialogue, not a document
+```
+Original (it)             Bad result             Accepted result
+<i>Non posso credere      <i>Nuk mund ta         <i>Nuk mund ta besoj
+che sia successo.</i>     besoj.</i>             që ndodhi kjo.</i>
+```
 
-LLMs give you:
-- ✅ Natural, conversational Albanian
-- ✅ Humor and cultural references adapted (not just translated)
-- ✅ Correct register — casual when characters are casual, formal when formal
-- ✅ Context from surrounding dialogue
-- ✅ Understanding of speaker labels and scene context
+The bad result has one line instead of two. The tool sends the block again with the problem described.
 
-## The Origin Story
+## Limitations
 
-January, 3 AM. I wanted to watch *Christmas in Love* (2004) — a Boldi & De Sica Italian Christmas comedy. The movie exists in Italian. English subtitles? Scraped the entire internet — OpenSubtitles, Subscene, Podnapisi, SubDL, obscure forums — nothing. Found Italian .srt files, ran them through a translation pipeline I built on the spot, and had English subs in 15 minutes.
+- Translation quality is not measured. The tests use mocked providers. Only Italian and English input have been tried by hand.
+- Run a native Albanian speaker over the result. LLMs can make mistakes in grammatical gender, word choice, and tone.
+- If a block still fails after all retries, it is kept in the output and counted as failed in the summary. Check the summary.
+- The validator checks structure only. It does not check that the meaning is right.
+- The tool does not wait or back off when an API rate limit is hit. A failed call for a retry is skipped.
+- Only the `.srt` format is supported.
+- There is no dry-run mode, no cost estimate, and no custom provider yet.
+- The Ollama provider uses `http://localhost:11434`. Changing the URL is not possible from the CLI yet.
 
-Then I thought: if English subs don't exist for a popular Italian comedy, what about Albanian? Albanian subtitles are virtually nonexistent for foreign films. Millions of Albanian speakers worldwide consuming Turkish dramas, Italian comedies, Greek films — all without subtitle support.
+## Development
 
-That's how AlbSub was born. A tool that can take any .srt file in any language and produce quality Albanian subtitles using the LLM of your choice.
-
-## Contributing
-
-PRs welcome. Especially:
-- New language pair testing and quality reports
-- Albanian dialect support (Gheg/Tosk)
-- Performance optimizations
-- Additional LLM provider integrations
-
-## Translation Results — Side-by-Side Comparisons
-
-All translations below were generated by AlbSub using **GPT-4o** with default settings (batch size 25, context window 3, temperature 0.3). **100% validation pass rate** on all runs.
-
----
-
-### 🇮🇹→🇦🇱 Italian to Albanian — *Christmas in Love* (2004)
-
-> Classic cinepanettone with Boldi & De Sica. The film that started this whole project.
-
-| # | 🇮🇹 Italian (Original) | 🇦🇱 Albanian (AlbSub) |
-|---|---|---|
-| 4 | *Questo sono io, Guido Baldi. Ho 54 anni.* | *Ky jam unë, Guido Baldi. Kam 54 vjeç.* |
-| 11 | *e una moglie splendida, mai tradita. Finché non è arrivata lei.* | *dhe një grua e mrekullueshme, kurrë e tradhtuar. Derisa erdhi ajo.* |
-| 12 | *Sofia, russa di Siberia, 25 anni, bella da far paura!* | *Sofia, ruse nga Siberia, 25 vjeç, e bukur sa të tremb!* |
-| 16 | *Mi sono innamorato di lei come un bimbo.* | *U dashurova me të si një fëmijë.* |
-| 18 | - Tieni, amore. - Cos'è? | - Ja, dashuri. - Çfarë është? |
-| 19 | - Buon compleanno! L'ho ricordato. | - Gëzuar ditëlindjen! E mbajta mend. |
-
----
-
-### 🇬🇧→🇦🇱 English to Albanian
-
-| # | 🇬🇧 English (Original) | 🇦🇱 Albanian (AlbSub) |
-|---|---|---|
-| 1 | Good morning everyone! | Mirëmëngjes të gjithëve! |
-| 3 | *I can't believe this happened.* | *Nuk mund ta besoj që ndodhi kjo.* |
-| 5 | I went to the market with my mother. | Shkova në treg me mamanë time. |
-| 9 | *Life is beautiful, but also difficult.* | *Jeta është e bukur, por edhe e vështirë.* |
-| 14 | [Julia] I really hope so. With all my heart. | [Julia] Shpresoj shumë. Me gjithë zemër. |
-| 16 | **Don't forget** the keys! | **Mos harro** çelësat! |
-
----
-
-### 🇮🇹 vs 🇬🇧 → 🇦🇱 Cross-Language Consistency
-
-> Same dialogue translated from both Italian and English sources. Shows AlbSub produces consistent Albanian regardless of source language.
-
-| 🇮🇹 Italian | 🇬🇧 English | 🇦🇱 from Italian | 🇦🇱 from English |
-|---|---|---|---|
-| Buongiorno a tutti! | Good morning everyone! | Mirëmëngjes të gjithëve! | Mirëmëngjes të gjithëve! |
-| Come stai oggi? Tutto bene? | How are you today? Everything okay? | Si je sot? Çdo gjë mirë? | Si jeni sot? Gjithçka në rregull? |
-| Sono andato al mercato con mia madre. | I went to the market with my mother. | Shkova në treg me mamin. | Shkova në treg me mamanë time. |
-| Grazie di tutto, amico mio. | Thank you for everything, my friend. | Faleminderit për gjithçka, miku im. | Faleminderit për gjithçka, miku im. |
-
-✅ Consistent meaning across source languages · ✅ Natural phrasing variation · ✅ Speaker labels & HTML tags preserved
-
-### ⚠️ A Note on AI Translation
-
-Let's be real: **no AI will ever match a native Albanian speaker.** AlbSub gets you 90% of the way there — fast. It handles structure, context, formatting, and produces surprisingly natural Albanian. But it's still an LLM at the end of the day. It might mix up gender (*Kjo* vs *Ky*), pick a slightly awkward phrasing, or miss a cultural nuance that only a native would catch.
-
-**The point isn't to replace human translators.** It's to give you working subtitles in minutes when there's no human translator available — which, for Albanian, is almost always. Watch the movie tonight, not next month.
-
-For production-quality subtitles, run AlbSub first, then have a native speaker do a quick pass. You'll save hours compared to translating from scratch.
+```bash
+npm test        # run the tests (providers are mocked, no API key needed)
+npm run build   # compile TypeScript to dist/
+npm start -- translate movie.srt   # run from source with tsx
+```
 
 ## License
 
-MIT
-
----
-
-**Made with 🔥 by [Irdi Zeneli](https://github.com/IrdiZ)**
-
-*Because every language deserves subtitles.*
+MIT. See [LICENSE](LICENSE).
